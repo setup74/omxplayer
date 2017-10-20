@@ -520,6 +520,8 @@ int main(int argc, char *argv[])
   float m_threshold      = -1.0f; // amount of audio/video required to come out of buffering
   float m_timeout        = 10.0f; // amount of time file/network operation can stall for before timing out
   int m_orientation      = -1; // unset
+  int m_landscape        = 0;  // not set
+  int m_portrait         = 0;  // not set
   float m_fps            = 0.0f; // unset
   TV_DISPLAY_STATE_T   tv_state;
   double last_seek_pos = 0;
@@ -551,6 +553,8 @@ int main(int argc, char *argv[])
   const int amp_opt         = 0x10e;
   const int no_osd_opt      = 0x202;
   const int orientation_opt = 0x204;
+  const int landscape_opt   = 0x214;
+  const int portrait_opt    = 0x215;
   const int fps_opt         = 0x208;
   const int live_opt        = 0x205;
   const int layout_opt      = 0x206;
@@ -619,6 +623,8 @@ int main(int argc, char *argv[])
     { "no-osd",       no_argument,        NULL,          no_osd_opt },
     { "no-keys",      no_argument,        NULL,          no_keys_opt },
     { "orientation",  required_argument,  NULL,          orientation_opt },
+    { "landscape",    no_argument,        NULL,          landscape_opt },
+    { "portrait",     no_argument,        NULL,          portrait_opt },
     { "fps",          required_argument,  NULL,          fps_opt },
     { "live",         no_argument,        NULL,          live_opt },
     { "layout",       required_argument,  NULL,          layout_opt },
@@ -845,6 +851,14 @@ int main(int argc, char *argv[])
         break;
       case orientation_opt:
         m_orientation = atoi(optarg);
+        break;
+      case landscape_opt:
+        m_landscape = 1;
+        m_portrait = 0;
+        break;
+      case portrait_opt:
+        m_portrait = 1;
+        m_landscape = 0;
         break;
       case fps_opt:
         m_fps = atof(optarg);
@@ -1096,6 +1110,15 @@ int main(int argc, char *argv[])
 
   if (m_orientation >= 0)
     m_config_video.hints.orientation = m_orientation;
+  else if (m_landscape) {
+    if (m_omx_reader.GetWidth() < m_omx_reader.GetHeight())
+      m_config_video.hints.orientation = 270;
+  }
+  else if (m_portrait) {
+    if (m_omx_reader.GetWidth() > m_omx_reader.GetHeight())
+      m_config_video.hints.orientation = 270;
+  }
+
   if(m_has_video && !m_player_video.Open(m_av_clock, m_config_video))
     goto do_exit;
 

@@ -100,6 +100,8 @@ Usage: omxplayer [OPTIONS] [FILE]
         --threshold   n         Amount of buffered data required to finish buffering [s]
         --timeout     n         Timeout for stalled file/network operations (default 10s)
         --orientation n         Set orientation of video (0, 90, 180 or 270)
+        --landscape             Set auto orientation for landscape display
+        --portrait              Set auto orientation for portrait display
         --fps n                 Set fps of video where timestamps are not present
         --live                  Set for live tv or vod type stream
         --layout                Set output speaker layout (e.g. 5.1)
